@@ -1,0 +1,43 @@
+syntax = "proto3";
+package qqbot.api;
+option go_package = "qqbot/api";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+service OneBot {
+  rpc SendMsg(SendMsgReq) returns (SendMsgResp);
+  rpc SendPrivateMsg(SendPrivateMsgReq) returns (SendPrivateMsgResp);
+  rpc SendGroupMsg(SendGroupMsgReq) returns (SendGroupMsgResp);
+}
+
+message SendMsgReq {
+  string message_type = 1;
+  int64 user_id = 2;
+  int64 group_id = 3;
+  string message = 4;
+  bool auto_escape = 5; // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+}
+
+message SendMsgResp {
+  int64 message_id = 1 [(gogoproto.jsontag) = 'message_id'];
+}
+
+message SendPrivateMsgReq {
+  int64 user_id = 1;
+  string message = 2;
+  bool auto_escape = 3; // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+}
+
+message SendPrivateMsgResp {
+  int64 message_id = 1 [(gogoproto.jsontag) = 'message_id'];
+}
+
+message SendGroupMsgReq {
+  int64 group_id = 1;
+  string message = 2;
+  bool auto_escape = 3; // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+}
+
+message SendGroupMsgResp {
+  int64 message_id = 1 [(gogoproto.jsontag) = 'message_id'];
+}
