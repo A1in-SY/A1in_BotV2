@@ -23,8 +23,12 @@ import (
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
 	proxyService := service.NewProxyService()
-	grpcServer := server.NewGRPCServer(confServer, proxyService, logger)
-	app := newApp(logger, grpcServer)
+	grpcServer := server.NewProxyServer(confServer, proxyService, logger)
+	notifyService := service.NewNotifyService()
+	httpServer1 := server.NewNotifyServer(confServer, notifyService, logger)
+	reportService := service.NewReportService()
+	httpServer2 := server.NewReportServer(confServer, reportService, logger)
+	app := newApp(logger, grpcServer, httpServer1, httpServer2)
 	return app, func() {
 	}, nil
 }

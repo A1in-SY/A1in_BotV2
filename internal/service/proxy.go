@@ -20,7 +20,7 @@ const (
 
 // ProxyService is a proxy of QQ OneBot. It implements all defined api of OneBotV11.
 type ProxyService struct {
-	api.UnimplementedOneBotServer
+	api.UnimplementedProxyServer
 
 	qqClient *http.Client
 }
@@ -34,21 +34,21 @@ func NewProxyService() *ProxyService {
 
 func (s *ProxyService) SendMsg(ctx context.Context, req *api.SendMsgReq) (resp *api.SendMsgResp, err error) {
 	resp = &api.SendMsgResp{}
-	defer log.Context(ctx).Infof("[ProxyService] SendMsg req: %v, resp: %v, err: %v", req, resp, err)
+	defer log.Context(ctx).Infof("[proxy] SendMsg req: %v, resp: %v, err: %v", req, resp, err)
 	err = s.qqCall(ctx, model.EndPointSendMsg, req, resp)
 	return
 }
 
 func (s *ProxyService) SendPrivateMsg(ctx context.Context, req *api.SendPrivateMsgReq) (resp *api.SendPrivateMsgResp, err error) {
 	resp = &api.SendPrivateMsgResp{}
-	defer log.Context(ctx).Infof("[ProxyService] SendPrivateMsg req: %v, resp: %v, err: %v", req, resp, err)
+	defer log.Context(ctx).Infof("[proxy] SendPrivateMsg req: %v, resp: %v, err: %v", req, resp, err)
 	err = s.qqCall(ctx, model.EndPointSendPrivateMsg, req, resp)
 	return
 }
 
 func (s *ProxyService) SendGroupMsg(ctx context.Context, req *api.SendGroupMsgReq) (resp *api.SendGroupMsgResp, err error) {
 	resp = &api.SendGroupMsgResp{}
-	defer log.Context(ctx).Infof("[ProxyService] SendGroupMsg req: %v, resp: %v, err: %v", req, resp, err)
+	defer log.Context(ctx).Infof("[proxy] SendGroupMsg req: %v, resp: %v, err: %v", req, resp, err)
 	err = s.qqCall(ctx, model.EndPointSendGroupMsg, req, resp)
 	return
 }

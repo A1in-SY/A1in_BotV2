@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/go-kratos/kratos/v2/transport/http"
 	"io"
 	"os"
 	"time"
@@ -37,7 +38,7 @@ func init() {
 	flag.StringVar(&flagLogPath, "logpath", "../../log", "log path, eg: -logpath ./log")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server) *kratos.App {
+func newApp(logger log.Logger, proxy *grpc.Server, notify *http.Server, report *http.Server) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -45,8 +46,9 @@ func newApp(logger log.Logger, gs *grpc.Server) *kratos.App {
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
 		kratos.Server(
-			gs,
-			//hs,
+			proxy,
+			notify,
+			report,
 		),
 	)
 }

@@ -4,7 +4,8 @@ option go_package = "qqbot/api";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-service OneBot {
+// Proxy service implemented part of OneBot V11 api
+service Proxy {
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
   rpc SendPrivateMsg(SendPrivateMsgReq) returns (SendPrivateMsgResp);
   rpc SendGroupMsg(SendGroupMsgReq) returns (SendGroupMsgResp);

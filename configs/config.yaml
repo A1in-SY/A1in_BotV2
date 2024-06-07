@@ -1,8 +1,14 @@
 server:
-  http:
+  # For outside link notify
+  report:
     addr: 0.0.0.0:8000
     timeout: 1s
-  grpc:
+  # For QQ event report
+  notify:
+    addr: 0.0.0.0:7999
+    timeout: 1s
+  # For proxy
+  proxy:
     addr: 0.0.0.0:9000
     timeout: 1s
 data:

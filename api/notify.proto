@@ -1,0 +1,26 @@
+syntax = "proto3";
+package qqbot.api;
+option go_package = "qqbot/api";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// Notify service accept registration from outside，and notify qq event.
+service Notify {
+
+}
+
+message LinkReq {
+
+}
+
+message LinkResp {
+
+}
+
+message RegisterReq {
+
+}
+
+message RegisterResp {
+
+}
