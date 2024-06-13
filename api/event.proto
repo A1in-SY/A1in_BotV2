@@ -1,0 +1,12 @@
+syntax = "proto3";
+package qqbot.api;
+option go_package = "qqbot/api";
+
+enum EventId {
+  /* ---- message event ---- */
+  MessageEventAll = 0;
+  MessageEventPrivateMessage = 1;
+  MessageEventGroupMessage = 2;
+  /* ---- notice event ---- */
+  NoticeEventAll = 100;
+}

@@ -3,24 +3,94 @@ package qqbot.api;
 option go_package = "qqbot/api";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "api/event.proto";
+import "api/segment.proto";
 
-// Notify service accept registration from outside，and notify qq event.
+// Notify accept registration from outside service，and notify the qq event.
 service Notify {
-
+    rpc Link (LinkReq) returns (LinkResp) {
+        option (google.api.http) = {
+            get: "/notify",
+        };
+    }
 }
 
-message LinkReq {
+message LinkReq{}
+message LinkResp{}
 
-}
-
-message LinkResp {
-
-}
-
+// 外部服务主动发起注册
 message RegisterReq {
-
+    // 外部服务名字
+    string name = 1;
+    // 外部服务 token
+    string token = 2;
+    // 需要的 event_id 列表
+    repeated EventId need_event_list = 3;
 }
 
 message RegisterResp {
+    // 是否注册成功
+    bool success = 1;
+}
 
+// notify 通过ws推送给外部服务的事件
+message NotifyEvent {
+    EventId event_id = 1;
+    int64 time = 2;
+    int64 self_id = 3;
+    string post_type = 4;
+    oneof NotifyEventData {
+        /* ---- message event ---- */
+        GroupMessageEvent group_msg = 5;
+        PrivateMessageEvent private_msg = 6;
+
+        /* ---- ---- */
+    }
+}
+
+message GroupMessageEvent {
+    string message_type = 1;
+    string sub_type = 2;
+    int64 message_id = 3;
+    int64 group_id = 4;
+    int64 user_id = 5;
+    Anonymous anonymous = 6;
+    repeated Segment message = 7;
+    string raw_message = 8;
+    int64 font = 9;
+    Sender sender = 10;
+    message Sender {
+        int64 user_id = 1;
+        string nickname = 2;
+        int64 sex = 3;
+        int64 age = 4;
+        string card = 5;
+        string area = 6;
+        string level = 7;
+        string role = 8;
+        string title = 9;
+    }
+    message Anonymous {
+        int64 id = 1;
+        string name = 2;
+        string flag = 3;
+    }
+}
+
+message PrivateMessageEvent {
+    string message_type = 1;
+    string sub_type = 2;
+    int64 message_id = 3;
+    int64 user_id = 4;
+    repeated Segment message = 5;
+    string raw_message = 6;
+    int64 font = 7;
+    Sender sender = 8;
+    message Sender {
+        int64 user_id = 1;
+        string nickname = 2;
+        int64 sex = 3;
+        int64 age = 4;
+    }
 }

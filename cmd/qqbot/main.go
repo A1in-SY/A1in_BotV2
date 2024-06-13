@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"io"
 	"os"
+	"qqbot/api"
+	"qqbot/internal/service"
 	"time"
 
 	"qqbot/internal/conf"
@@ -50,6 +53,10 @@ func newApp(logger log.Logger, proxy *grpc.Server, notify *http.Server, report *
 			notify,
 			report,
 		),
+		kratos.BeforeStop(func(ctx context.Context) error {
+			service.NewProxyService().SendDebugMsg(ctx, &api.SendDebugMsgReq{Message: []*api.Segment{api.BuildTextSegment("QQBot 正在关闭，如非人为操作请查看服务日志并检查运行状态")}})
+			return nil
+		}),
 	)
 }
 

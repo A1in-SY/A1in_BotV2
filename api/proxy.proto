@@ -3,20 +3,23 @@ package qqbot.api;
 option go_package = "qqbot/api";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "api/segment.proto";
 
 // Proxy service implemented part of OneBot V11 api
 service Proxy {
   rpc SendMsg(SendMsgReq) returns (SendMsgResp);
   rpc SendPrivateMsg(SendPrivateMsgReq) returns (SendPrivateMsgResp);
   rpc SendGroupMsg(SendGroupMsgReq) returns (SendGroupMsgResp);
+  rpc SendDebugMsg(SendDebugMsgReq) returns (SendDebugMsgResp);
 }
 
 message SendMsgReq {
   string message_type = 1;
   int64 user_id = 2;
   int64 group_id = 3;
-  string message = 4;
-  bool auto_escape = 5; // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+  repeated Segment message = 4;
+  // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+  bool auto_escape = 5;
 }
 
 message SendMsgResp {
@@ -25,8 +28,9 @@ message SendMsgResp {
 
 message SendPrivateMsgReq {
   int64 user_id = 1;
-  string message = 2;
-  bool auto_escape = 3; // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+  repeated Segment message = 2;
+  // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+  bool auto_escape = 3;
 }
 
 message SendPrivateMsgResp {
@@ -35,10 +39,19 @@ message SendPrivateMsgResp {
 
 message SendGroupMsgReq {
   int64 group_id = 1;
-  string message = 2;
-  bool auto_escape = 3; // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+  repeated Segment message = 2;
+  // 消息内容是否作为纯文本发送（即不解析 CQ 码），只在 message 字段是字符串时有效
+  bool auto_escape = 3;
 }
 
 message SendGroupMsgResp {
+  int64 message_id = 1 [(gogoproto.jsontag) = 'message_id'];
+}
+
+message SendDebugMsgReq {
+  repeated Segment message = 1;
+}
+
+message SendDebugMsgResp {
   int64 message_id = 1 [(gogoproto.jsontag) = 'message_id'];
 }

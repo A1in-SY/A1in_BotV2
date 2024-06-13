@@ -25,6 +25,6 @@ func NewNotifyServer(c *conf.Server, notify *service.NotifyService, logger log.L
 		opts = append(opts, http.Timeout(c.Notify.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	srv.HandleFunc("/link", notify.Link)
+	srv.HandleFunc("/notify", notify.Link)
 	return srv
 }

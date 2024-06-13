@@ -6,17 +6,18 @@ import (
 	"github.com/gorilla/websocket"
 	nethttp "net/http"
 	"qqbot/api"
+	"qqbot/internal/repo"
 )
 
 type NotifyService struct {
 	api.UnimplementedNotifyServer
 
-	wsUpgrader *websocket.Upgrader
+	wsUpGrader *websocket.Upgrader
 }
 
 func NewNotifyService() *NotifyService {
 	return &NotifyService{
-		wsUpgrader: &websocket.Upgrader{
+		wsUpGrader: &websocket.Upgrader{
 			CheckOrigin: func(r *nethttp.Request) bool {
 				// 允许CORS请求
 				return true
@@ -26,23 +27,12 @@ func NewNotifyService() *NotifyService {
 }
 
 func (s *NotifyService) Link(w http.ResponseWriter, r *http.Request) {
-	ws, err := s.wsUpgrader.Upgrade(w, r, nil)
+	ws, err := s.wsUpGrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Errorf("[notify] ws upgrade err: %v", err)
 		return
 	}
-	go s.handle(ws)
+	nClient := repo.NewNotifyClient(ws)
+	go nClient.Handle()
 	return
-}
-
-func (s *NotifyService) handle(ws *websocket.Conn) {
-	defer ws.Close()
-	for {
-		messageType, p, err := ws.ReadMessage()
-		if err != nil {
-			log.Errorf("[notify] ws read message err: %v", err)
-			break
-		}
-		log.Infof("[notify] ws receive message: %v, type: %v", string(p), messageType)
-	}
 }

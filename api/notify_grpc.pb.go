@@ -7,7 +7,10 @@
 package api
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,12 +18,15 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-const ()
+const (
+	Notify_Link_FullMethodName = "/qqbot.api.Notify/Link"
+)
 
 // NotifyClient is the client API for Notify service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotifyClient interface {
+	Link(ctx context.Context, in *LinkReq, opts ...grpc.CallOption) (*LinkResp, error)
 }
 
 type notifyClient struct {
@@ -31,10 +37,20 @@ func NewNotifyClient(cc grpc.ClientConnInterface) NotifyClient {
 	return &notifyClient{cc}
 }
 
+func (c *notifyClient) Link(ctx context.Context, in *LinkReq, opts ...grpc.CallOption) (*LinkResp, error) {
+	out := new(LinkResp)
+	err := c.cc.Invoke(ctx, Notify_Link_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NotifyServer is the server API for Notify service.
 // All implementations must embed UnimplementedNotifyServer
 // for forward compatibility
 type NotifyServer interface {
+	Link(context.Context, *LinkReq) (*LinkResp, error)
 	mustEmbedUnimplementedNotifyServer()
 }
 
@@ -42,6 +58,9 @@ type NotifyServer interface {
 type UnimplementedNotifyServer struct {
 }
 
+func (UnimplementedNotifyServer) Link(context.Context, *LinkReq) (*LinkResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Link not implemented")
+}
 func (UnimplementedNotifyServer) mustEmbedUnimplementedNotifyServer() {}
 
 // UnsafeNotifyServer may be embedded to opt out of forward compatibility for this service.
@@ -55,13 +74,36 @@ func RegisterNotifyServer(s grpc.ServiceRegistrar, srv NotifyServer) {
 	s.RegisterService(&Notify_ServiceDesc, srv)
 }
 
+func _Notify_Link_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LinkReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotifyServer).Link(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Notify_Link_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotifyServer).Link(ctx, req.(*LinkReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Notify_ServiceDesc is the grpc.ServiceDesc for Notify service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Notify_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "qqbot.api.Notify",
 	HandlerType: (*NotifyServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "api/notify.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Link",
+			Handler:    _Notify_Link_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api/notify.proto",
 }

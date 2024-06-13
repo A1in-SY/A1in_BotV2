@@ -22,6 +22,7 @@ const (
 	Proxy_SendMsg_FullMethodName        = "/qqbot.api.Proxy/SendMsg"
 	Proxy_SendPrivateMsg_FullMethodName = "/qqbot.api.Proxy/SendPrivateMsg"
 	Proxy_SendGroupMsg_FullMethodName   = "/qqbot.api.Proxy/SendGroupMsg"
+	Proxy_SendDebugMsg_FullMethodName   = "/qqbot.api.Proxy/SendDebugMsg"
 )
 
 // ProxyClient is the client API for Proxy service.
@@ -31,6 +32,7 @@ type ProxyClient interface {
 	SendMsg(ctx context.Context, in *SendMsgReq, opts ...grpc.CallOption) (*SendMsgResp, error)
 	SendPrivateMsg(ctx context.Context, in *SendPrivateMsgReq, opts ...grpc.CallOption) (*SendPrivateMsgResp, error)
 	SendGroupMsg(ctx context.Context, in *SendGroupMsgReq, opts ...grpc.CallOption) (*SendGroupMsgResp, error)
+	SendDebugMsg(ctx context.Context, in *SendDebugMsgReq, opts ...grpc.CallOption) (*SendDebugMsgResp, error)
 }
 
 type proxyClient struct {
@@ -68,6 +70,15 @@ func (c *proxyClient) SendGroupMsg(ctx context.Context, in *SendGroupMsgReq, opt
 	return out, nil
 }
 
+func (c *proxyClient) SendDebugMsg(ctx context.Context, in *SendDebugMsgReq, opts ...grpc.CallOption) (*SendDebugMsgResp, error) {
+	out := new(SendDebugMsgResp)
+	err := c.cc.Invoke(ctx, Proxy_SendDebugMsg_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProxyServer is the server API for Proxy service.
 // All implementations must embed UnimplementedProxyServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type ProxyServer interface {
 	SendMsg(context.Context, *SendMsgReq) (*SendMsgResp, error)
 	SendPrivateMsg(context.Context, *SendPrivateMsgReq) (*SendPrivateMsgResp, error)
 	SendGroupMsg(context.Context, *SendGroupMsgReq) (*SendGroupMsgResp, error)
+	SendDebugMsg(context.Context, *SendDebugMsgReq) (*SendDebugMsgResp, error)
 	mustEmbedUnimplementedProxyServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedProxyServer) SendPrivateMsg(context.Context, *SendPrivateMsgR
 }
 func (UnimplementedProxyServer) SendGroupMsg(context.Context, *SendGroupMsgReq) (*SendGroupMsgResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendGroupMsg not implemented")
+}
+func (UnimplementedProxyServer) SendDebugMsg(context.Context, *SendDebugMsgReq) (*SendDebugMsgResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendDebugMsg not implemented")
 }
 func (UnimplementedProxyServer) mustEmbedUnimplementedProxyServer() {}
 
@@ -158,6 +173,24 @@ func _Proxy_SendGroupMsg_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Proxy_SendDebugMsg_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendDebugMsgReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProxyServer).SendDebugMsg(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Proxy_SendDebugMsg_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProxyServer).SendDebugMsg(ctx, req.(*SendDebugMsgReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Proxy_ServiceDesc is the grpc.ServiceDesc for Proxy service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var Proxy_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendGroupMsg",
 			Handler:    _Proxy_SendGroupMsg_Handler,
+		},
+		{
+			MethodName: "SendDebugMsg",
+			Handler:    _Proxy_SendDebugMsg_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

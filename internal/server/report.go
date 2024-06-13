@@ -4,6 +4,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"qqbot/api"
 	"qqbot/internal/conf"
 	"qqbot/internal/service"
 )
@@ -24,5 +25,6 @@ func NewReportServer(c *conf.Server, notify *service.ReportService, logger log.L
 		opts = append(opts, http.Timeout(c.Report.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
+	api.RegisterReportHTTPServer(srv, notify)
 	return srv
 }

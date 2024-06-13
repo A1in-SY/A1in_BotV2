@@ -1,15 +1,15 @@
 server:
-  # For outside link notify
-  report:
-    addr: 0.0.0.0:8000
-    timeout: 1s
   # For QQ event report
+  report:
+    addr: 127.0.0.1:8000
+    timeout: 1s
+  # For outside service notify
   notify:
-    addr: 0.0.0.0:7999
+    addr: 127.0.0.1:7999
     timeout: 1s
   # For proxy
   proxy:
-    addr: 0.0.0.0:9000
+    addr: 127.0.0.1:9000
     timeout: 1s
 data:
   database:

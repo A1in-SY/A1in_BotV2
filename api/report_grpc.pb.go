@@ -7,7 +7,10 @@
 package api
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,12 +18,15 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-const ()
+const (
+	Report_ReportEvent_FullMethodName = "/qqbot.api.Report/ReportEvent"
+)
 
 // ReportClient is the client API for Report service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReportClient interface {
+	ReportEvent(ctx context.Context, in *ReportEventReq, opts ...grpc.CallOption) (*ReportEventResp, error)
 }
 
 type reportClient struct {
@@ -31,10 +37,20 @@ func NewReportClient(cc grpc.ClientConnInterface) ReportClient {
 	return &reportClient{cc}
 }
 
+func (c *reportClient) ReportEvent(ctx context.Context, in *ReportEventReq, opts ...grpc.CallOption) (*ReportEventResp, error) {
+	out := new(ReportEventResp)
+	err := c.cc.Invoke(ctx, Report_ReportEvent_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReportServer is the server API for Report service.
 // All implementations must embed UnimplementedReportServer
 // for forward compatibility
 type ReportServer interface {
+	ReportEvent(context.Context, *ReportEventReq) (*ReportEventResp, error)
 	mustEmbedUnimplementedReportServer()
 }
 
@@ -42,6 +58,9 @@ type ReportServer interface {
 type UnimplementedReportServer struct {
 }
 
+func (UnimplementedReportServer) ReportEvent(context.Context, *ReportEventReq) (*ReportEventResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReportEvent not implemented")
+}
 func (UnimplementedReportServer) mustEmbedUnimplementedReportServer() {}
 
 // UnsafeReportServer may be embedded to opt out of forward compatibility for this service.
@@ -55,13 +74,36 @@ func RegisterReportServer(s grpc.ServiceRegistrar, srv ReportServer) {
 	s.RegisterService(&Report_ServiceDesc, srv)
 }
 
+func _Report_ReportEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReportEventReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReportServer).ReportEvent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Report_ReportEvent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReportServer).ReportEvent(ctx, req.(*ReportEventReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Report_ServiceDesc is the grpc.ServiceDesc for Report service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Report_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "qqbot.api.Report",
 	HandlerType: (*ReportServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "api/report.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ReportEvent",
+			Handler:    _Report_ReportEvent_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api/report.proto",
 }

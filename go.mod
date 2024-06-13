@@ -3,7 +3,7 @@ module qqbot
 go 1.19
 
 require (
-	github.com/go-kratos/kratos/v2 v2.7.2
+	github.com/go-kratos/kratos/v2 v2.7.3
 	github.com/gogo/protobuf v1.3.2
 	github.com/google/wire v0.5.0
 	github.com/gorilla/websocket v1.5.1
@@ -21,7 +21,7 @@ require (
 	github.com/go-playground/form/v4 v4.2.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
