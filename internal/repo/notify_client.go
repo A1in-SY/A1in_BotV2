@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"context"
+	"fmt"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/gorilla/websocket"
 	"google.golang.org/protobuf/proto"
@@ -14,6 +16,7 @@ type NotifyClient struct {
 	isAuth    bool
 	name      string
 	eventChan *model.EventChan
+	qqClient  *QQClient
 }
 
 func NewNotifyClient(conn *websocket.Conn) *NotifyClient {
@@ -24,6 +27,7 @@ func NewNotifyClient(conn *websocket.Conn) *NotifyClient {
 		isAuth:    false,
 		name:      "",
 		eventChan: eventChan,
+		qqClient:  NewQQClient(),
 	}
 }
 
@@ -32,6 +36,11 @@ func (c *NotifyClient) Handle() {
 	defer func() {
 		c.conn.Close()
 		c.eventChan.Close()
+		c.qqClient.Call(context.Background(), model.EndPointSendGroupMsg, &api.SendGroupMsgReq{
+			GroupId:    253016320,
+			Message:    []*api.Segment{api.BuildTextSegment(fmt.Sprintf("%v 断开链接", c.name))},
+			AutoEscape: false,
+		}, &api.SendGroupMsgResp{})
 	}()
 	_, data, err := c.conn.ReadMessage()
 	if err != nil {
