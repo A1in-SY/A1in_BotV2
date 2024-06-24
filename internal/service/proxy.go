@@ -44,8 +44,8 @@ func (s *ProxyService) SendGroupMsg(ctx context.Context, req *api.SendGroupMsgRe
 func (s *ProxyService) SendDebugMsg(ctx context.Context, req *api.SendDebugMsgReq) (resp *api.SendDebugMsgResp, err error) {
 	resp = &api.SendDebugMsgResp{}
 	defer log.Context(ctx).Infof("[proxy] SendDebugMsg req: %v, resp: %v, err: %v", req, resp, err)
-	err = s.qqClient.Call(ctx, model.EndPointSendPrivateMsg, &api.SendPrivateMsgReq{
-		UserId:     2675421868,
+	err = s.qqClient.Call(ctx, model.EndPointSendGroupMsg, &api.SendGroupMsgReq{
+		GroupId:    DebugGroupId,
 		Message:    req.GetMessage(),
 		AutoEscape: false,
 	}, resp)
